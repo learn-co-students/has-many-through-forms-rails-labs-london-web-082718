@@ -11,19 +11,23 @@
 <h3>Comments:</h3>
 <ol>
   <% @post.comments.each do |comment| %>
-  <li><%= comment.content %></li>
+  <li><%= "#{comment.user.username} says: #{comment.content}" %></li>
   <% end %>
 </ol>
 <h3>Commenters:</h3>
 <ul>
-  <% @post.users.each do |user| %>
+  <% @post.users.uniq.each do |user| %>
   <li><%= link_to user.username, user %></li>
   <% end %>
 </ul>
 <h3>Add comment:</h3>
-<%= form_for Comment.new(post_id: @post.id) do |f| %>
+<%= form_for @comment do |f| %>
   <%= f.label :content, value: "Comment:" %>
   <%= f.text_field :content %><br>
-  <%= f.collection_radio_buttons :user_id, User.all, :id, :username %><br>
+  <%= f.collection_select :user_id, User.all, :id, :username, include_blank: "Select user" %><br>
+  <%= f.fields_for :user, @comment.build_user do |user| %>
+    Or enter new user: <%= user.text_field :username %><br>
+  <% end %>
+  <%= f.hidden_field :post_id, value: @post.id %>
   <%= f.submit %>
 <% end %>

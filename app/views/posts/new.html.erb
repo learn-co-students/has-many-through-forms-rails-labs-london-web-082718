@@ -1,1 +1,36 @@
-<%= render 'form', post: Post.new %>
+
+
+<%= form_for(@post) do |f| %>
+
+  <p>
+    <%= f.label "Title" %>
+    <%= f.text_field :title %>
+  </p>
+
+  <p>
+    <%= f.label "Content" %>
+    <%= f.text_area :content %>
+  </p>
+
+  <% #building checkbox for each category and then associating it %>
+  <% #A bunch of check boxes based on categories for the post's categories id's %>
+
+  <%= f.collection_check_boxes(:category_ids, Category.all, :id, :name) do |b| %>
+
+  <p>
+    <%= b.label %>
+    <%= b.check_box %>
+  </p>
+  <% end %>
+
+  <% #Will generate a checkbox post[category_ids][] for each category in Category.all  %>
+   <%#it will use the :id as the value for the checkbox  %>
+  <%#and it will use the name method as the label for the checkbox %>
+
+  <%= f.fields_for :categories do |category_builder| %>
+    <%= category_builder.text_field :name %>
+    <% end %>
+
+  <%= f.submit %>
+
+<% end %>
